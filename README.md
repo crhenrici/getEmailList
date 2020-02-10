@@ -1,3 +1,3 @@
 # getEmailList
 
-Small tool to get List of the mails of a list given with multiple employees, duplicate included
+Small tool to get a list of mails from a given list with multiple employees, duplicates included
