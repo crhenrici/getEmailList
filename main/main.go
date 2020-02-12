@@ -9,6 +9,7 @@ import (
 )
 
 func main() {
+	gui()
 	var fName string
 	fmt.Println("Name of file")
 	fmt.Scanf("%s\n", &fName)
