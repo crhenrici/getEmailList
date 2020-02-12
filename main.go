@@ -28,6 +28,7 @@ func main() {
 
 }
 
+//check for error
 func check(e error) {
 	if e != nil {
 		log.Fatalf("Failed openning file: %s", e)
@@ -47,12 +48,14 @@ func readFile(file *os.File, newFile *os.File) {
 	}
 	for i = 0; i < len(textLines); i++ {
 		columns = append(strings.Split(textLines[i], "	"))
+		//names as parameter so values don't get lost
 		names = getNames(names, columns, newFile)
 	}
 }
 
 //get the names from the while
 //more specifically get the name from a specific column in the file
+//slice has to be given as parameter to continue to work with the values from last call
 func getNames(names, columns []string, newFile *os.File) []string {
 	length := len(columns)
 
@@ -62,32 +65,22 @@ func getNames(names, columns []string, newFile *os.File) []string {
 			if columns[i] != "" {
 				trimmedName := strings.TrimSpace(columns[i])
 				if !find(names, trimmedName) {
-					//fmt.Println(names)
 					names = append(names, trimmedName)
 					fullName := strings.Split(trimmedName, " ")
 					emailAdress := fullName[0] + "." + fullName[1] + "@prose.one"
-					//fmt.Println(emailAdress)
 					newFile.WriteString(emailAdress + "\r\n")
 				}
 			}
 		}
 	}
 	columns = nil
+	//return slice so that values of the slice don't get lost
 	return names
 }
 
-//write names to new file
-func writeFile(names []string, file *os.File) {
-	//length := len(names)
-	//fmt.Println(length)
-	/*for i := 0; i < length; i++ {
-		file.WriteString(names[i] + "\n")
-	} */
-}
-
+//search if slice contains given value
 func find(slice []string, val string) bool {
 	for _, item := range slice {
-		//fmt.Println(val + " =" + item)
 		if val == item {
 			return true
 		}
