@@ -2,19 +2,13 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"strings"
 )
 
-func main() {
-	gui()
-	var fName string
-	fmt.Println("Name of file")
-	fmt.Scanf("%s\n", &fName)
-	fmt.Printf("Opening file %s\n", fName)
-	dat, err := os.Open(fName)
+func process(name string) error {
+	dat, err := os.Open(name)
 	check(err)
 	newFile, err := os.Create("EmailList.txt")
 	check(err)
@@ -22,11 +16,8 @@ func main() {
 	dat.Close()
 	//create new file
 	newFile.Close()
-	fmt.Println("New File Created!")
-	var finish string
-	fmt.Println("Press any key to finish")
-	fmt.Scanf("%s", &finish)
 
+	return err
 }
 
 //check for error
@@ -60,6 +51,7 @@ func readFile(file *os.File, newFile *os.File) {
 func getNames(names, columns []string, newFile *os.File) []string {
 	length := len(columns)
 
+	//iterate through columns
 	for i := 0; i < length; i++ {
 		//7th column is the name required
 		if (i % 7) == 0 {
@@ -68,7 +60,12 @@ func getNames(names, columns []string, newFile *os.File) []string {
 				if !find(names, trimmedName) {
 					names = append(names, trimmedName)
 					fullName := strings.Split(trimmedName, " ")
-					emailAdress := fullName[0] + "." + fullName[1] + "@prose.one"
+					var emailAdress string
+					if len(fullName) == 2 {
+						emailAdress = fullName[0] + "." + fullName[1] + "@prose.one"
+					} else if len(fullName) == 3 {
+						emailAdress = fullName[0] + "." + fullName[1] + fullName[2] + "@prose.one"
+					}
 					newFile.WriteString(emailAdress + "\r\n")
 				}
 			}
