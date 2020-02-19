@@ -8,4 +8,5 @@ Each line of the given list is read of the given. Each line then is divided into
 The GUI is made of a button, a textfield and a menu to open a file dialog. The design is kept simple.
 
 ### TODOS
+- Encode user inputs with umlauts to UTF-8 to replace umlauts on case to case basis
 - Improve programm, e.g. use column with the needed names instead of a hardcoded column
