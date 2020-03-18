@@ -1,22 +1,24 @@
 package main
 
 import (
-	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"strings"
+
+	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
 func process(name string) error {
-	dat, err := os.Open(name)
+	dat, err := excelize.OpenFile(name)
 	check(err)
 	newFile, err := os.Create("EmailList.txt")
 	check(err)
-	readFile(dat, newFile)
-	dat.Close()
+	//read columns
+	names := readColumn(dat)
 	//create new file
+	writeToFile(names, newFile)
 	newFile.Close()
-
 	return err
 }
 
@@ -27,54 +29,35 @@ func check(e error) {
 	}
 }
 
-//read file input
-func readFile(file *os.File, newFile *os.File) {
-	scanner := bufio.NewScanner(file)
-	scanner.Split(bufio.ScanLines)
-	var textLines []string
-	var columns []string
-	names := make([]string, 0, 100)
-	i := 0
-	for scanner.Scan() {
-		textLines = append(textLines, scanner.Text())
-	}
-	for i = 0; i < len(textLines); i++ {
-		columns = append(strings.Split(textLines[i], "	"))
-		//names as parameter so values don't get lost
-		names = getNames(names, columns, newFile)
-	}
-}
-
-//get the names from the while
-//more specifically get the name from a specific column in the file
-//slice has to be given as parameter to continue to work with the values from last call
-func getNames(names, columns []string, newFile *os.File) []string {
-	length := len(columns)
-
-	//iterate through columns
-	for i := 0; i < length; i++ {
-		//7th column is the name required
-		if (i % 7) == 0 {
-			if columns[i] != "" {
-				trimmedName := strings.TrimSpace(columns[i])
-				if !find(names, trimmedName) {
-					names = append(names, trimmedName)
-					fullName := strings.Split(trimmedName, " ")
-					var emailAdress string
-					if len(fullName) == 2 {
-						emailAdress = fullName[0] + "." + fullName[1] + "@prose.one"
-					} else if len(fullName) == 3 {
-						emailAdress = fullName[0] + "." + fullName[1] + fullName[2] + "@prose.one"
-					}
-					emailAdress = checkUmlaut(emailAdress)
-					newFile.WriteString(emailAdress + "\r\n")
-				}
-			}
+//read column with the project manager names
+//and write to slice
+func readColumn(file *excelize.File) []string {
+	n := 100
+	names := make([]string, 0, 50)
+	for i := 1; i < n; i++ {
+		h, err := file.GetCellValue("Project Storage", fmt.Sprintf("H%d", i))
+		check(err)
+		if !find(names, h) {
+			names = append(names, h)
 		}
 	}
-	columns = nil
-	//return slice so that values of the slice don't get lost
 	return names
+}
+
+//write names of slice into a new file
+func writeToFile(names []string, newFile *os.File) {
+	length := len(names)
+	for i := 1; i < length; i++ {
+		fullName := strings.Split(names[i], " ")
+		var emailAdress string
+		if len(fullName) == 2 {
+			emailAdress = fullName[0] + "." + fullName[1] + "@prose.one"
+		} else if len(fullName) == 3 {
+			emailAdress = fullName[0] + "." + fullName[1] + fullName[2] + "@prose.one"
+		}
+		//checkUmlaut(emailAdress)
+		newFile.WriteString(emailAdress + "\r\n")
+	}
 }
 
 //search if slice contains given value
@@ -88,11 +71,11 @@ func find(slice []string, val string) bool {
 }
 
 //checking for umlaut and replacing them
-//needs to be improved because inputs with umlauts are note UTF-8 encoded
+//needs to be improved because inputs with umlauts are not UTF-8 encoded
 //need to encode to UTF-8 first to replace umlaut on a case basis
 func checkUmlaut(fullName string) string {
 	fullName = strings.ToValidUTF8(fullName, "ue")
-	/*if strings.ContainsAny(fullName, "ä") {
+	if strings.ContainsAny(fullName, "ä") {
 		fmt.Println("Test")
 		strings.Replace(fullName, "ä", "ae", -1)
 	} else if strings.ContainsAny(fullName, "ö") {
@@ -101,6 +84,6 @@ func checkUmlaut(fullName string) string {
 	} else if strings.ContainsAny(fullName, "ü") {
 		fmt.Println("Test")
 		strings.Replace(fullName, "ü", "ue", -1)
-	} */
+	}
 	return fullName
 }
