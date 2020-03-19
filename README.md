@@ -8,5 +8,5 @@ With the latest update I made use of the [excelize](https://github.com/360EntSec
 The GUI is made of a button, a textfield and a menu to open a file dialog. The design is kept simple. The GUI is made with [winc](https://github.com/tadvi/winc) library.
 
 ### TODOS
-- Encode user inputs with umlauts to UTF-8 to replace umlauts on case to case basis[DONE] (Due to the use of excel sheets, all the strings are UTF-8 encoded
+- Encode user inputs with umlauts to UTF-8 to replace umlauts on case to case basis[DONE] (Due to the use of excel sheets, all the strings are UTF-8 encoded)
 - Improve programm, e.g. use column with the needed names instead of a hardcoded column [DONE]
