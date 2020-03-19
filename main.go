@@ -55,7 +55,7 @@ func writeToFile(names []string, newFile *os.File) {
 		} else if len(fullName) == 3 {
 			emailAdress = fullName[0] + "." + fullName[1] + fullName[2] + "@prose.one"
 		}
-		//checkUmlaut(emailAdress)
+		emailAdress = checkUmlaut(emailAdress)
 		newFile.WriteString(emailAdress + "\r\n")
 	}
 }
@@ -71,19 +71,17 @@ func find(slice []string, val string) bool {
 }
 
 //checking for umlaut and replacing them
-//needs to be improved because inputs with umlauts are not UTF-8 encoded
-//need to encode to UTF-8 first to replace umlaut on a case basis
+//due to using the excel sheet, all the strings
+//are UTF8 encoded
 func checkUmlaut(fullName string) string {
 	fullName = strings.ToValidUTF8(fullName, "ue")
 	if strings.ContainsAny(fullName, "ä") {
-		fmt.Println("Test")
-		strings.Replace(fullName, "ä", "ae", -1)
+		fullName = strings.Replace(fullName, "ä", "ae", -1)
 	} else if strings.ContainsAny(fullName, "ö") {
-		fmt.Println("Test")
-		strings.Replace(fullName, "ö", "oe", -1)
+		fullName = strings.Replace(fullName, "ö", "oe", -1)
 	} else if strings.ContainsAny(fullName, "ü") {
-		fmt.Println("Test")
-		strings.Replace(fullName, "ü", "ue", -1)
+		fullName = strings.Replace(fullName, "ü", "ue", -1)
 	}
+
 	return fullName
 }
