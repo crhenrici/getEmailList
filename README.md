@@ -4,7 +4,7 @@ Small tool to get a list of mails from a given list with multiple employees, dup
 
 ### Details
 
-With the latest update I made use of the [excelize](https://github.com/360EntSecGroup-Skylar/excelize) library. Therefore I can directly access the column needed. To get all the values of the column I simply iterate through the roughs.
+With the latest update I made use of the [excelize](https://github.com/360EntSecGroup-Skylar/excelize) library. Therefore I can directly access the column needed. To get all the values of the column I simply iterate through the rows.
 The GUI is made of a button, a textfield and a menu to open a file dialog. The design is kept simple. The GUI is made with [winc](https://github.com/tadvi/winc) library.
 
 ### TODOS
